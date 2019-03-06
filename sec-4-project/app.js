@@ -17,32 +17,72 @@ var globalScore = [0,0];
 var roundScore = [0,0];
 var activePlayer = 0;
 
-function rollDice () {
+function rollDice() {
   var roll = Math.floor((Math.random() * 6) + 1);
   if (roll === 1) {
     roundScore[activePlayer] = 0;
+    endRound(activePlayer);
   }
   else {
     roundScore[activePlayer] += roll;
   }
-  document.querySelector('#current-' + activePlayer).textContent = roundScore[activePlayer];
-  if
+  // Update current player's round score
+  updateRoundScore()
+  updateDice(roll);
 }
 
-function endRound (player) {
-  globalScore[player] += roundScore[player];
-  roundScore[player] = 0;
+function newGame() {
+  // reset active player
+  player0Active()
+
+  //reset game values
+  globalScore = [0,0];
+  roundScore = [0,0];
+  document.querySelector('#score-0').textContent = globalScore[0];
+  document.querySelector('#score-1').textContent = globalScore[1];
+  document.querySelector('#current-0').textContent = roundScore[0];
+  document.querySelector('#current-1').textContent = roundScore[1];
+}
+
+
+function endRound () {
+  globalScore[activePlayer] += roundScore[activePlayer];
+  document.querySelector('#score-' + activePlayer).textContent = globalScore[activePlayer];
+  checkWinCondition()
+
+  roundScore[activePlayer] = 0;
+  document.querySelector('#current-' + activePlayer).textContent = roundScore[activePlayer];
   switch (activePlayer) {
     case 0:
-      activePlayer = 1;
+      player1Active()
       break;
     case 1:
-      activePlayer = 0;
+      player0Active()
   }
 }
 
-function checkWinCondition (player) {
-  if (globalScore[player] >= 100) {
-    console.log('Win!!!');
+function checkWinCondition () {
+  if (globalScore[activePlayer] >= 100) {
+    console.log('Player ' + (activePlayer+1) + ' Wins!!!');
   }
+}
+
+function updateDice(roll) {
+  document.getElementById('diceimage').src = 'dice-' + roll + '.png';
+}
+
+function player0Active() {
+  activePlayer = 0;
+  document.getElementById('player0div').className = "player-0-panel active";
+  document.getElementById('player1div').className = "player-1-panel";
+}
+
+function player1Active() {
+  activePlayer = 1;
+  document.getElementById('player1div').className = "player-1-panel active";
+  document.getElementById('player0div').className = "player-0-panel";
+}
+
+function updateRoundScore() {
+  document.querySelector('#current-' + activePlayer).textContent = roundScore[activePlayer];
 }
